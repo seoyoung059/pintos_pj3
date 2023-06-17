@@ -58,8 +58,8 @@ void
 list_init (struct list *list) {
 	ASSERT (list != NULL);
 	list->head.prev = NULL;
-	list->head.next = &list->tail;
-	list->tail.prev = &list->head;
+	list->head.next = &list->tail; //리스트 주소의 테일값
+	list->tail.prev = &list->head; 
 	list->tail.next = NULL;
 }
 

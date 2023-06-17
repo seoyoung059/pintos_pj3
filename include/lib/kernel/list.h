@@ -93,6 +93,7 @@ struct list_elem {
 struct list {
 	struct list_elem head;      /* List head. */
 	struct list_elem tail;      /* List tail. */
+
 };
 
 /* Converts pointer to list element LIST_ELEM into a pointer to

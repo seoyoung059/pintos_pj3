@@ -40,16 +40,16 @@ struct hash_elem {
 		- offsetof (STRUCT, MEMBER.list_elem)))
 
 /* Computes and returns the hash value for hash element E, given
- * auxiliary data AUX. */
+ * auxiliary data AUX. 수정*/
 typedef uint64_t hash_hash_func (const struct hash_elem *e, void *aux);
 
 /* Compares the value of two hash elements A and B, given
  * auxiliary data AUX.  Returns true if A is less than B, or
- * false if A is greater than or equal to B. */
+ * false if A is greater than or equal to B. 수정*/
 typedef bool hash_less_func (const struct hash_elem *a,
 		const struct hash_elem *b,
 		void *aux);
-
+ 
 /* Performs some operation on hash element E, given auxiliary
  * data AUX. */
 typedef void hash_action_func (struct hash_elem *e, void *aux);
@@ -62,6 +62,7 @@ struct hash {
 	hash_hash_func *hash;       /* Hash function. */
 	hash_less_func *less;       /* Comparison function. */
 	void *aux;                  /* Auxiliary data for `hash' and `less'. */
+	
 };
 
 /* A hash table iterator. */

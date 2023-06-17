@@ -4,6 +4,7 @@
 struct page;
 enum vm_type;
 
+/*익명페이지*/
 struct anon_page {
 };
 

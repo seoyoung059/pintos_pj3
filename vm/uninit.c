@@ -42,7 +42,8 @@ uninit_new (struct page *page, void *va, vm_initializer *init,
 	};
 }
 
-/* Initalize the page on first fault */
+/* Initalize the page on first fault 
+ * 초기화되지 않은 페이지 초기화*/
 static bool
 uninit_initialize (struct page *page, void *kva) {
 	struct uninit_page *uninit = &page->uninit;
@@ -59,7 +60,8 @@ uninit_initialize (struct page *page, void *kva) {
 /* Free the resources hold by uninit_page. Although most of pages are transmuted
  * to other page objects, it is possible to have uninit pages when the process
  * exit, which are never referenced during the execution.
- * PAGE will be freed by the caller. */
+ * PAGE will be freed by the caller. 
+ *  * 초기화되지 않은 페이지 삭제*/
 static void
 uninit_destroy (struct page *page) {
 	struct uninit_page *uninit UNUSED = &page->uninit;
