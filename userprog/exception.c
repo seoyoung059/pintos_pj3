@@ -27,7 +27,7 @@ static void page_fault (struct intr_frame *);
    Page faults are an exception.  Here they are treated the same
    way as other exceptions, but this will need to change to
    implement virtual memory.
-
+ 
    Refer to [IA32-v3a] section 5.15 "Exception and Interrupt
    Reference" for a description of each of these exceptions. */
 void
@@ -146,6 +146,7 @@ page_fault (struct intr_frame *f) {
 	write = (f->error_code & PF_W) != 0;
 	user = (f->error_code & PF_U) != 0;
 	exit(-1);
+	
 
 #ifdef VM
 	/* For project 3 and later. */
