@@ -9,8 +9,8 @@
 
 static char dst[8192];
 
-/* Returns the beginning of a page.  There are at least 2048
-   modifiable bytes on either side of the pointer returned. */
+  /* Returns the beginning of a page.  There are at least 2048
+    modifiable bytes on either side of the pointer returned. */
 void *
 get_boundary_area (void) 
 {

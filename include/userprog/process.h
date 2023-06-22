@@ -14,4 +14,15 @@ struct file *process_get_file(int fd);
 void process_close_file(int fd);
 void remove_child_process(struct thread *cp);
 
+
+
+bool install_page(void *upage, void *kpage, bool writable);
+
+static bool load_segment(struct file *file, off_t ofs, uint8_t *upage,
+             uint32_t read_bytes, uint32_t zero_bytes, bool writable);
+
+static bool setup_stack(struct intr_frame *if_);
+
+
+static bool lazy_load_segment(struct page *page, void *aux);
 #endif /* userprog/process.h */

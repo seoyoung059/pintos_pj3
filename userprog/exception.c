@@ -27,7 +27,7 @@ static void page_fault (struct intr_frame *);
    Page faults are an exception.  Here they are treated the same
    way as other exceptions, but this will need to change to
    implement virtual memory.
- 
+
    Refer to [IA32-v3a] section 5.15 "Exception and Interrupt
    Reference" for a description of each of these exceptions. */
 void
@@ -119,8 +119,6 @@ kill (struct intr_frame *f) {
    can find more information about both of these in the
    description of "Interrupt 14--Page Fault Exception (#PF)" in
    [IA32-v3a] section 5.15 "Exception and Interrupt Reference". */
-
-/*수정해야하는 부분*/
 static void
 page_fault (struct intr_frame *f) {
 	bool not_present;  /* True: not-present page, false: writing r/o page. */
@@ -141,12 +139,10 @@ page_fault (struct intr_frame *f) {
 
 
 	/* Determine cause. */
-	/* 원인을 결론내릴때?*/
 	not_present = (f->error_code & PF_P) == 0;
 	write = (f->error_code & PF_W) != 0;
 	user = (f->error_code & PF_U) != 0;
-	exit(-1);
-	
+	// exit(-1);
 
 #ifdef VM
 	/* For project 3 and later. */
@@ -158,13 +154,12 @@ page_fault (struct intr_frame *f) {
 	page_fault_cnt++;
 
 	/* If the fault is true fault, show info and exit. */
-	printf ("Page fault at %p: %s error %s page in %s context.\n",
-			fault_addr,
-			not_present ? "not present" : "rights violation",
-			write ? "writing" : "reading",
-			user ? "user" : "kernel");
-	kill (f);
+	// printf ("Page fault at %p: %s error %s page in %s context.\n",
+	// 		fault_addr,
+	// 		not_present ? "not present" : "rights violation",
+	// 		write ? "writing" : "reading",
+	// 		user ? "user" : "kernel");
+	// kill (f);
+	exit(-1);
 }
-/*to implement virtual memory, delete the rest of the function body, and replace it with ode that brings in the page to chich fault_addr refers*/
-/*가상메모리를 구현하려면 함수 본문의 나머지 부분을 삭제하고 fault_addr가 참조하는 페이지를 가져오는 코드로 대체해라*/
 
