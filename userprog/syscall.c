@@ -103,6 +103,12 @@ void syscall_handler(struct intr_frame *f UNUSED)
    case SYS_CLOSE: /* Close a file. */
       close(f->R.rdi);
       break;
+   case SYS_MMAP: /* Report current position in a file. */
+      f->R.rax = mmap(f->R.rdi, f->R.rsi,f->R.rdx, f->R.r10, f->R.r8);
+      break;
+   case SYS_MUNMAP: /* Close a file. */
+      munmap(f->R.rdi);
+      break;
    default:
       thread_exit();
    }
