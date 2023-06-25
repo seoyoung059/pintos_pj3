@@ -250,7 +250,7 @@ buffer 안에 fd 로 열려있는 파일로부터 size 바이트를 읽습니다
 int read(int fd, void *buffer, unsigned size)
 {
    /*check_valid_buffer(인자)함수 구현*/
-   check_valid_buffer(buffer,size, true);
+   check_valid_buffer(buffer,size, 1);
    // check_address(buffer); /*삭제*/
    int file_size;
    char *read_buffer = buffer;
@@ -291,6 +291,7 @@ buffer로부터 open file fd로 size 바이트를 적어줍니다.
 */
 int write(int fd, const void *buffer, unsigned size)
 {
+   check_valid_buffer(buffer, size, 0);
    int file_size;
    if (fd == STDOUT_FILENO)
    {
@@ -309,6 +310,7 @@ int write(int fd, const void *buffer, unsigned size)
    }
    return file_size;
 }
+
 
 /*
 open file fd에서 읽거나 쓸 다음 바이트를 position으로 변경합니다.
@@ -401,10 +403,10 @@ void check_valid_buffer(void *buffer, unsigned size, bool to_write)
       struct page *p = check_address(buffer + i);
       /*유효하지 않은 경우*/
       if(p == NULL){
-         exit(-1);
+         return -1;
       }
       /*쓰기작업의 경우*/
-      if(to_write == false && p->writable == false){
+      if(to_write == true && p->writable == false){
          exit(-1);
       }
    }
