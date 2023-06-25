@@ -16,7 +16,7 @@
 #include "filesys/file.h"
 #include "userprog/process.h"
 #include <string.h>
-
+#define VM
 #ifdef VM
 #include "vm/vm.h"
 #endif
@@ -40,7 +40,8 @@ void syscall_handler(struct intr_frame *);
 // void seek(int fd, unsigned position);
 // unsigned tell(int fd);
 // void close(int fd);
-void check_address(void *addr);
+// void check_address(void *addr);
+struct page *check_address(void *addr);
 int process_add_file(struct file *f);
 struct file *process_get_file(int fd);
 
@@ -245,9 +246,12 @@ buffer 안에 fd 로 열려있는 파일로부터 size 바이트를 읽습니다
 실제로 읽어낸 바이트의 수 를 반환합니다 (파일 끝에서 시도하면 0).
 파일이 읽어질 수 없었다면 -1을 반환합니다.
 */
+
 int read(int fd, void *buffer, unsigned size)
 {
-   check_address(buffer);
+   /*check_valid_buffer(인자)함수 구현*/
+   check_valid_buffer(buffer,size, true);
+   // check_address(buffer); /*삭제*/
    int file_size;
    char *read_buffer = buffer;
    if (fd == 0)
@@ -352,20 +356,65 @@ void close(int fd)
 주소 값이 유저 영역 주소 값인지 확인
 유저 영역을 벗어난 영역일 경우 프로세스 종료(exit(-1)
 */
-void check_address(void *addr)
+// void check_address(void *addr)
+// {
+//    struct thread *curr = thread_current();
+//    if (!is_user_vaddr(addr) || is_kernel_vaddr(addr) || pml4_get_page(curr->pml4, addr) == NULL)
+//    {
+//       exit(-1);
+//    }
+// }
+
+/* vm_entry를 사용해서 유효성 검사 작업을 수행 */
+/* addr이 vm_entry에 조재하면 vm_entry 반환*/
+struct page *check_address (void * addr) 
 {
    struct thread *curr = thread_current();
-   if (!is_user_vaddr(addr) || is_kernel_vaddr(addr) || pml4_get_page(curr->pml4, addr) == NULL)
+#ifdef VM
+   //주소가 없는 경우
+   if(addr == NULL){
+      exit(-1);
+   }
+   struct page *p = spt_find_page(&thread_current()->spt, addr);
+   // 유저 영역을 벗어난 영역일 경우 프로세스 종료(exit(-1)
+   if (!is_user_vaddr(addr) || is_kernel_vaddr(addr)||!addr||!p)
    {
       exit(-1);
    }
+   return  p;
+#endif
 }
-/*buffer의 유효성 검사 함수*/
-void check_valid_buffer(void* buffer, unsigned size, void* esp, bool to_write){
 
+/*buffer의 유효성 검사 함수 -> read()의 경우 buffer 주소 유효성 검사 필요함
+ check_valid_buffer구현시 check_address 함수 사용/
+
+ /* 버퍼의 시작 주소와 끝 주소가 사용자 가상 메모리 영역 내에 있는지 확인합니다.
+   버퍼가 쓰기 작업에 사용되는 경우, 버퍼가 읽기 전용 페이지에 매핑되어 있는지 확인합니다.
+   버퍼가 스택 확장을 유발하는지 확인합니다.
+   이 함수는 버퍼가 유효하지 않은 경우 프로세스를 종료합니다.*/
+ /*버퍼는 꼭 페이지 크기가 아닐수있따*/
+/* 검사할 버퍼의 주소 / 버퍼의 크기 / 스택포인터 / 쓰기 작업인지 아닌지 */
+void check_valid_buffer(void *buffer, unsigned size, bool to_write)
+{
+   for (char i = 0; i <= size; i++)
+   {
+      struct page *p = check_address(buffer + i);
+      /*유효하지 않은 경우*/
+      if(p == NULL){
+         exit(-1);
+      }
+      /*쓰기작업의 경우*/
+      if(to_write == false && p->writable == false){
+         exit(-1);
+      }
+   }
 }
+
 /* system_call에서 사용할 인자의 문자열의 주소값이 유효한 가상주소인지 검사
- * check_address()함수사용*/
-void check_valid_string(const void* str, void* esp){
-
-}
+ * check_address()함수사용  확신 없음*/
+// void check_valid_string(const void* str){
+//    struct thread *curr = &thread_current()->elem;
+   
+//    if(check_address(curr) == NULL) return exit(-1);
+   
+// }

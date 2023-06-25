@@ -10,6 +10,7 @@ swap_byte (uint8_t *a, uint8_t *b)
   *b = t;
 }
 
+/*arc4 구조체 초기화*/
 void
 arc4_init (struct arc4 *arc4, const void *key_, size_t size)
 {
@@ -31,6 +32,7 @@ arc4_init (struct arc4 *arc4, const void *key_, size_t size)
     }
 }
 
+/*arc4 구조체를 사용해 데이터 스트림을 암호화, 복호화하는데 사용*/
 void
 arc4_crypt (struct arc4 *arc4, void *buf_, size_t size)
 {

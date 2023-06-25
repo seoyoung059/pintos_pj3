@@ -852,8 +852,11 @@ load_segment(struct file *file, off_t ofs, uint8_t *upage,
 static bool
 setup_stack(struct intr_frame *if_)
 {
+   struct thread* curr = thread_current();
    bool success = false;
    void *stack_bottom = (void *)(((uint8_t *)USER_STACK) - PGSIZE);
+   
+   curr->stack_bottom = stack_bottom;
 
    /* TODO: Map the stack on stack_bottom and claim the page immediately.
     * TODO: If success, set the rsp accordingly.
@@ -862,6 +865,7 @@ setup_stack(struct intr_frame *if_)
    if(!vm_alloc_page(VM_ANON|VM_MARKER_0,stack_bottom,true)) return false;
    if(!vm_claim_page(stack_bottom)) return false;
    if_->rsp = (uintptr_t) USER_STACK;
+   
    return true;
    // return success;
 }
